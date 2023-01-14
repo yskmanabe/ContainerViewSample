@@ -14,12 +14,18 @@ class ListScene: UIViewController {
 
     private var dataSource = [DataSource]() {
         didSet {
-            self.embededScene?.reloadData()
+            self.embededDelegate?.reloadData()
         }
     }
 
-    private var embededScene: ListSceneEmbededDelegate? {
-        return self.children.first as? ListSceneEmbededDelegate
+    private var embededDelegate: ListSceneEmbededDelegate? {
+        return self.embededScene as? ListSceneEmbededDelegate
+    }
+
+    private var embededScene: UIViewController? {
+        return self.children.first { viewController in
+            return viewController is ListSceneEmbededDelegate
+        }
     }
 
     override func viewDidLoad() {
@@ -68,7 +74,7 @@ class ListScene: UIViewController {
 
     @IBAction func layoutStyleDidChange(_ sender: LayoutStyleSegmentControl) {
 
-        guard let fromVC = self.embededScene as? UIViewController else {
+        guard let fromVC = self.embededScene else {
             self.embed(with: sender.style)
             return
         }
