@@ -16,22 +16,29 @@ import UIKit
     public let destination: UIViewController
 
     /// エンベッド先
-    public var container: UIViewController?
+    public private(set) var parent: UIViewController?
+    public let container: UIView?
 
     public init(source: UIViewController, destination: UIViewController) {
         self.source = source
         self.destination = destination
-        self.container = source.parent
+        self.parent = source.parent
+        self.container = source.view.superview
     }
 
     open func perform() {
+        guard let parent = self.parent else {
+            return
+        }
+        
         guard let container = self.container else {
             return
         }
 
-        Self.unEmbed(source)
-        Self.embed(destination,
-                               to: container)
+        Self.unEmbed(self.source)
+        Self.embed(self.destination,
+                   to: parent,
+                   container: container)
     }
 
 }
@@ -41,11 +48,11 @@ extension UIEmbedSegue {
     // Memo
     // addChild(_:) メソッドをコールした直後に、 子ビューコントローラの didMove(toParent:) メソッドをコールしなければなりません。
     // カスタムコンテナが addChild(_:) メソッドをコールすると、 自動的に子として追加されるビューコントローラの willMove(toParent:) メソッドをコールしてから子として追加されます。
-    static func embed(_ viewController: UIViewController, to container: UIViewController) {
-        container.addChild(viewController)
-        viewController.view.frame = container.view.bounds
-        container.view.addSubview(viewController.view)
-        viewController.didMove(toParent: container)
+    static func embed(_ viewController: UIViewController, to parent: UIViewController, container: UIView) {
+        parent.addChild(viewController)
+        viewController.view.frame = container.bounds
+        container.addSubview(viewController.view)
+        viewController.didMove(toParent: parent)
     }
 
     // Memo

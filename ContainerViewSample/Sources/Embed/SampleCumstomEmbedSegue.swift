@@ -11,23 +11,27 @@ final class SampleCumstomEmbedSegue: UIEmbedSegue {
 
     override func perform() {
 
+        guard let parent = self.parent else {
+            return
+        }
+
         guard let container = self.container else {
             return
         }
 
-        source.willMove(toParent: nil)
-        container.addChild(destination)
+        self.source.willMove(toParent: nil)
+        parent.addChild(self.destination)
 
-        destination.view.frame = .zero
+        self.destination.view.frame = .zero
 
-        container.transition(from: source,
-                        to: destination,
-                        duration: 0.3) {
-            self.destination.view.frame = container.view.bounds
+        parent.transition(from: self.source,
+                          to: self.destination,
+                          duration: 0.3) {
+            self.destination.view.frame = container.bounds
             self.source.view.frame = .zero
         } completion: { finished in
             self.source.removeFromParent()
-            self.destination.didMove(toParent: container)
+            self.destination.didMove(toParent: parent)
         }
 
     }

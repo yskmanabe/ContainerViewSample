@@ -66,9 +66,13 @@ class ListScene: UIViewController {
     private func embed(with style: LayoutStyleSegmentControl.Style) {
         switch style {
         case .table:
-            UIEmbedSegue.embed(self.createTableLayoutScene(), to: self)
+            UIEmbedSegue.embed(self.createTableLayoutScene(),
+                               to: self,
+                               container: self.view)
         case .grid:
-            UIEmbedSegue.embed(self.createGridLayoutScene(), to: self)
+            UIEmbedSegue.embed(self.createGridLayoutScene(),
+                               to: self,
+                               container: self.view)
         }
     }
 
